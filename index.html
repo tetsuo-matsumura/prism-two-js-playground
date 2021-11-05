@@ -85,7 +85,7 @@
       <div>
         <input
           type="range"
-          min="1"
+          min="0"
           max="4"
           step="0.1"
           value="1"
@@ -108,9 +108,9 @@
         <input
           type="range"
           min="0"
-          max="100"
-          step="1"
-          value="10"
+          max="10"
+          step="0.1"
+          value="1"
           class="slider"
           id="soundVolume"
         /><label for="soundVolume">Volume</label>
@@ -153,7 +153,7 @@
     let unmute = false;
     let pitch = 1;
     let soundDuration = 100;
-    let soundVolume = 10;
+    let soundVolume = 1;
     let oscType;
     switch (~~(Math.random() * 4) + 1) {
       case 1:
@@ -365,7 +365,7 @@
           beep(
             soundDuration + mouse.clientY,
             mouse.clientX,
-            mouse.clientY * (1.6 * +Math.random() * pitch)
+            mouse.clientY * (1.6 * (Math.random() * pitch))
           );
 
           let hueRotation = mouse.clientX / params.width;
