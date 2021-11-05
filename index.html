@@ -80,6 +80,10 @@
         <input type="checkbox" id="displayXAxis" name="displayXAxis" />
         <label for="displayXAxis">Display X Axis?</label>
       </div>
+      <div>
+        <input type="checkbox" id="displayPrism" name="displayPrism" checked />
+        <label for="displayXAxis">Display Prism?</label>
+      </div>
     </div>
     <div id="sound-controller">
       <div>
@@ -134,6 +138,7 @@
     const vertixAmountSlider = document.getElementById("vertixAmount");
     const displayPivotRadio = document.getElementById("displayPivot");
     const displayXAxisRadio = document.getElementById("displayXAxis");
+    const displayPrismRadio = document.getElementById('displayPrism');
     const levitationSpeedSlider = document.getElementById("levitationSpeed");
     const pitchSlider = document.getElementById("pitch");
     const soundDurationSlider = document.getElementById("soundDuration");
@@ -145,6 +150,7 @@
     let rotateAmount = 20;
     let displayPivot = false;
     let displayXAxis = false;
+    let displayPrism = true;
     let levitationAmount = 0;
     let levitationToggle = true;
     let levitationSpeed = 0;
@@ -155,6 +161,7 @@
     let soundDuration = 100;
     let soundVolume = 1;
     let oscType;
+
     switch (~~(Math.random() * 4) + 1) {
       case 1:
         oscType = "Sine";
@@ -202,6 +209,13 @@
       two.clear();
       drawPrism();
     };
+
+    displayPrismRadio.oninput = () => {
+      displayPrism = !displayPrism;
+      two.clear();
+      drawPrism();
+    };
+
     displayPivotRadio.oninput = () => {
       displayPivot = !displayPivot;
       two.clear();
@@ -253,9 +267,9 @@
       if (Array.isArray(line)) {
         line.forEach(colorizeLines);
       } else {
-        line.stroke = "#FFF";
+        line.stroke = displayPrism ? "#FFF":"#000";
         line.linewidth = 3;
-        line.fill = "#FFF";
+        line.fill = displayPrism ? "#FFF":"#000";
       }
     };
 
@@ -374,7 +388,7 @@
             lightness * 100
           }%,1)`;
           setTimeout(() => {
-            thisElement.style.stroke = "rgba(255,255,255,1)";
+            thisElement.style.stroke = displayPrism ? "#FFF":"#000";
           }, 100 + mouse.clientY);
         };
       }
