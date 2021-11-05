@@ -125,6 +125,7 @@
   </body>
   <script src="./two.min.js"></script>
   <script>
+    // Global variables
     const elem = document.getElementById("draw-shapes");
     const params = { width: window.innerWidth, height: window.innerHeight };
     const pivot = {
@@ -133,6 +134,7 @@
     };
     const two = new Two(params).appendTo(elem);
 
+    // Dom elements
     const prismHeightSlider = document.getElementById("prismHeight");
     const prismWidthSlider = document.getElementById("prismWidth");
     const vertixAmountSlider = document.getElementById("vertixAmount");
@@ -144,6 +146,7 @@
     const soundDurationSlider = document.getElementById("soundDuration");
     const soundVolumeSlider = document.getElementById("soundVolume");
 
+    // Initial values
     let prismWidth = 100;
     let prismHeight = 200;
     let vertixAmount = 4;
@@ -162,6 +165,7 @@
     let soundVolume = 1;
     let oscType;
 
+    // Setup oscillator type
     switch (~~(Math.random() * 4) + 1) {
       case 1:
         oscType = "Sine";
@@ -180,6 +184,7 @@
         break;
     }
 
+    // Initialize the audio context
     document.addEventListener("click", () => {
       unmute = true;
       document.getElementById("unmute").style.display = "none";
@@ -187,6 +192,28 @@
       document.getElementById("oscType").style.color = "white";
     });
 
+    // Input handlers
+    //// Radios
+    
+    displayPrismRadio.oninput = () => {
+      displayPrism = !displayPrism;
+      two.clear();
+      drawPrism();
+    };
+
+    displayPivotRadio.oninput = () => {
+      displayPivot = !displayPivot;
+      two.clear();
+      drawPrism();
+    };
+
+    displayXAxisRadio.oninput = () => {
+      displayXAxis = !displayXAxis;
+      two.clear();
+      drawPrism();
+    };
+
+    //// Sliders
     soundVolumeSlider.oninput = () => {
       soundVolume = parseInt(soundVolumeSlider.value);
       two.clear();
@@ -210,24 +237,6 @@
       drawPrism();
     };
 
-    displayPrismRadio.oninput = () => {
-      displayPrism = !displayPrism;
-      two.clear();
-      drawPrism();
-    };
-
-    displayPivotRadio.oninput = () => {
-      displayPivot = !displayPivot;
-      two.clear();
-      drawPrism();
-    };
-
-    displayXAxisRadio.oninput = () => {
-      displayXAxis = !displayXAxis;
-      two.clear();
-      drawPrism();
-    };
-
     prismHeightSlider.oninput = () => {
       prismHeight = parseInt(prismHeightSlider.value);
       two.clear();
@@ -245,6 +254,7 @@
       drawPrism();
     };
 
+    // Levitation animation trigger
     const animate = () => {
       clearInterval(levitate);
       if (levitationSpeed == 0) return;
@@ -263,6 +273,7 @@
       }, 1000 / levitationSpeed);
     };
 
+    // Colorize Two.Line objects
     const colorizeLines = (line) => {
       if (Array.isArray(line)) {
         line.forEach(colorizeLines);
@@ -273,7 +284,10 @@
       }
     };
 
+    // Render the prism
     const drawPrism = () => {
+
+      // Cartesian axis
       const yAxisTop = two.makeLine(
         pivot.width,
         pivot.height,
@@ -294,7 +308,6 @@
             pivot.height
           )
         : {};
-
       const xAxisLeft = displayXAxis
         ? two.makeLine(
             pivot.width,
@@ -305,6 +318,7 @@
         : {};
       colorizeLines([xAxisRight, xAxisLeft, yAxisTop, yAxisBot]);
 
+      // Draw a line for each vertix
       for (let i = vertixAmount; i > 0; i--) {
         const vertix1 = two.makeLine(
           pivot.width - (prismWidth / vertixAmount) * i,
@@ -332,6 +346,8 @@
         );
         colorizeLines([vertix1, vertix2, vertix3, vertix4]);
       }
+
+      // Draw the bounding box
       const boundaryLine1 = two.makeLine(
         pivot.width - prismWidth,
         pivot.height,
@@ -362,6 +378,7 @@
         boundaryLine3,
         boundaryLine4,
       ]);
+      // Draw pivot
       const circle = displayPivot
         ? two.makeCircle(pivot.width, pivot.height, 5)
         : {};
@@ -372,6 +389,7 @@
       two.update();
       animate();
 
+      // Add event listener to handle mouse enter/leave
       allPaths = document.getElementsByTagName("path");
       for (let i = 0; i < allPaths.length; i++) {
         let thisElement = allPaths[i];
@@ -395,14 +413,15 @@
     };
     drawPrism();
 
-    let beep = (function () {
+    // Setup and run beep sound
+    let beep = (() => {
       let ctxClass =
         window.audioContext ||
         window.AudioContext ||
         window.AudioContext ||
         window.webkitAudioContext;
       let ctx = new ctxClass();
-      return function (duration, frequency, detune) {
+      return (duration, frequency, detune) => {
         duration = +duration;
 
         let gainNode = ctx.createGain();
@@ -417,7 +436,7 @@
         if (osc.noteOn) osc.noteOn(0);
         if (osc.start) osc.start();
 
-        setTimeout(function () {
+        setTimeout(() => {
           if (osc.noteOff) osc.noteOff(0);
           if (osc.stop) osc.stop();
         }, duration);
