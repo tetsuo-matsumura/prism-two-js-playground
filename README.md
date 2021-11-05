@@ -1,2 +1,2 @@
 # prism-two-js-playground
-playing with two js
+https://tetsuo-matsumura.github.io/prism-two-js-playground/
