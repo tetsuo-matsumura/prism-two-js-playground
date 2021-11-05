@@ -1,10 +1,24 @@
 <html>
   <head>
     <title>Draw a Prism</title>
-    <link rel="apple-touch-icon" sizes="180x180" href="./favicon/apple-touch-icon.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="./favicon/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="./favicon/favicon-16x16.png">
-    <link rel="manifest" href="./favicon/site.webmanifest">
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="./favicon/apple-touch-icon.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="./favicon/favicon-32x32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="./favicon/favicon-16x16.png"
+    />
+    <link rel="manifest" href="./favicon/site.webmanifest" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -63,7 +77,7 @@
         <label for="scales">Display Pivot?</label>
       </div>
       <div>
-        <input type="checkbox" id="displayXAxis" name="displayXAxis"  />
+        <input type="checkbox" id="displayXAxis" name="displayXAxis" />
         <label for="scales">Display X Axis?</label>
       </div>
     </div>
@@ -74,7 +88,7 @@
     const params = { width: window.innerWidth, height: window.innerHeight };
     const pivot = {
       width: window.innerWidth / 2,
-      height: (window.innerHeight / 2),
+      height: window.innerHeight / 2,
     };
 
     const two = new Two(params).appendTo(elem);
@@ -101,7 +115,7 @@
       levitationSpeed = parseInt(levitationSpeedSlider.value);
       two.clear();
       drawPrism();
-    }
+    };
     displayPivotRadio.oninput = () => {
       displayPivot = !displayPivot;
       two.clear();
@@ -132,22 +146,22 @@
     };
 
     const animate = () => {
-      clearInterval(levitate)
-      levitate = setInterval(()=> {
-        if (levitationSpeed == 0) levitationAmount = 0
+      clearInterval(levitate);
+      levitate = setInterval(() => {
+        if (levitationSpeed == 0) levitationAmount = 0;
         pivot.height = pivot.height + levitationAmount;
-        levitationToggle ? levitationAmount++ : levitationAmount--
-        if(levitationAmount > 5) {
-          levitationToggle =  false
+        levitationToggle ? levitationAmount++ : levitationAmount--;
+        if (levitationAmount > 5) {
+          levitationToggle = false;
         }
-        if(levitationAmount < -5) {
-          levitationToggle = true
+        if (levitationAmount < -5) {
+          levitationToggle = true;
         }
-        
+
         two.clear();
         drawPrism();
-    },1000/levitationSpeed)
-    }
+      }, 1000 / levitationSpeed);
+    };
 
     const colorizeLines = (line) => {
       if (Array.isArray(line)) {
@@ -241,7 +255,12 @@
         pivot.width,
         pivot.height + prismHeight
       );
-      colorizeLines([boundaryLine1, boundaryLine2, boundaryLine3, boundaryLine4]);
+      colorizeLines([
+        boundaryLine1,
+        boundaryLine2,
+        boundaryLine3,
+        boundaryLine4,
+      ]);
       const circle = displayPivot
         ? two.makeCircle(pivot.width, pivot.height, 5)
         : {};
