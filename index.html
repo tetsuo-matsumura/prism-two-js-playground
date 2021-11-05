@@ -48,11 +48,22 @@
         /><label for="scales">Vertix Amount</label>
       </div>
       <div>
-        <input type="checkbox" id="displayPivot" name="displayPivot" checked />
+        <input
+          type="range"
+          min="0"
+          step="10"
+          max="120"
+          value="20"
+          class="slider"
+          id="levitationSpeed"
+        /><label for="scales">Levitation Speed</label>
+      </div>
+      <div>
+        <input type="checkbox" id="displayPivot" name="displayPivot" />
         <label for="scales">Display Pivot?</label>
       </div>
       <div>
-        <input type="checkbox" id="displayXAxis" name="displayXAxis" checked />
+        <input type="checkbox" id="displayXAxis" name="displayXAxis"  />
         <label for="scales">Display X Axis?</label>
       </div>
     </div>
@@ -63,8 +74,9 @@
     const params = { width: window.innerWidth, height: window.innerHeight };
     const pivot = {
       width: window.innerWidth / 2,
-      height: window.innerHeight / 2,
+      height: (window.innerHeight / 2),
     };
+
     const two = new Two(params).appendTo(elem);
 
     const prismHeightSlider = document.getElementById("prismHeight");
@@ -72,14 +84,24 @@
     const vertixAmountSlider = document.getElementById("vertixAmount");
     const displayPivotRadio = document.getElementById("displayPivot");
     const displayXAxisRadio = document.getElementById("displayXAxis");
+    const levitationSpeedSlider = document.getElementById("levitationSpeed");
 
     let prismWidth = 100;
     let prismHeight = 200;
     let vertixAmount = 4;
     let rotateAmount = 20;
-    let displayPivot = true;
-    let displayXAxis = true;
+    let displayPivot = false;
+    let displayXAxis = false;
+    let levitationAmount = 0;
+    let levitationToggle = true;
+    let levitationSpeed = 20;
+    let levitate;
 
+    levitationSpeedSlider.oninput = () => {
+      levitationSpeed = parseInt(levitationSpeedSlider.value);
+      two.clear();
+      drawPrism();
+    }
     displayPivotRadio.oninput = () => {
       displayPivot = !displayPivot;
       two.clear();
@@ -108,6 +130,24 @@
       two.clear();
       drawPrism();
     };
+
+    const animate = () => {
+      clearInterval(levitate)
+      levitate = setInterval(()=> {
+        if (levitationSpeed == 0) levitationAmount = 0
+        pivot.height = pivot.height + levitationAmount;
+        levitationToggle ? levitationAmount++ : levitationAmount--
+        if(levitationAmount > 5) {
+          levitationToggle =  false
+        }
+        if(levitationAmount < -5) {
+          levitationToggle = true
+        }
+        
+        two.clear();
+        drawPrism();
+    },1000/levitationSpeed)
+    }
 
     const colorizeLines = (line) => {
       if (Array.isArray(line)) {
@@ -210,6 +250,7 @@
       circle.linewidth = 5;
 
       two.update();
+      animate();
     };
     drawPrism();
   </script>
