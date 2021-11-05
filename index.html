@@ -1,0 +1,216 @@
+<html>
+  <head>
+    <title>Draw a Prism</title>
+    <link rel="apple-touch-icon" sizes="180x180" href="./apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="./favicon-16x16.png">
+    <link rel="manifest" href="./site.webmanifest">
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="./normalize.css" />
+    <link rel="stylesheet" href="./prism.css" />
+  </head>
+  <body>
+    <div id="draw-shapes"></div>
+    <div id="controller">
+      <div>
+        <input
+          type="range"
+          min="10"
+          max="1000"
+          value="100"
+          class="slider"
+          id="prismWidth"
+        /><label for="scales">Prism Width</label>
+      </div>
+      <div>
+        <input
+          type="range"
+          min="10"
+          max="1000"
+          value="200"
+          class="slider"
+          id="prismHeight"
+        /><label for="scales">Prism Height</label>
+      </div>
+      <div>
+        <input
+          type="range"
+          min="2"
+          max="20"
+          value="4"
+          class="slider"
+          id="vertixAmount"
+        /><label for="scales">Vertix Amount</label>
+      </div>
+      <div>
+        <input type="checkbox" id="displayPivot" name="displayPivot" checked />
+        <label for="scales">Display Pivot?</label>
+      </div>
+      <div>
+        <input type="checkbox" id="displayXAxis" name="displayXAxis" checked />
+        <label for="scales">Display X Axis?</label>
+      </div>
+    </div>
+  </body>
+  <script src="./two.min.js"></script>
+  <script>
+    const elem = document.getElementById("draw-shapes");
+    const params = { width: window.innerWidth, height: window.innerHeight };
+    const pivot = {
+      width: window.innerWidth / 2,
+      height: window.innerHeight / 2,
+    };
+    const two = new Two(params).appendTo(elem);
+
+    const prismHeightSlider = document.getElementById("prismHeight");
+    const prismWidthSlider = document.getElementById("prismWidth");
+    const vertixAmountSlider = document.getElementById("vertixAmount");
+    const displayPivotRadio = document.getElementById("displayPivot");
+    const displayXAxisRadio = document.getElementById("displayXAxis");
+
+    let prismWidth = 100;
+    let prismHeight = 200;
+    let vertixAmount = 4;
+    let rotateAmount = 20;
+    let displayPivot = true;
+    let displayXAxis = true;
+
+    displayPivotRadio.oninput = () => {
+      displayPivot = !displayPivot;
+      two.clear();
+      drawPrism();
+    };
+
+    displayXAxisRadio.oninput = () => {
+      displayXAxis = !displayXAxis;
+      two.clear();
+      drawPrism();
+    };
+
+    prismHeightSlider.oninput = () => {
+      prismHeight = parseInt(prismHeightSlider.value);
+      two.clear();
+      drawPrism();
+    };
+    prismWidthSlider.oninput = () => {
+      prismWidth = parseInt(prismWidthSlider.value);
+      two.clear();
+      drawPrism();
+    };
+
+    vertixAmountSlider.oninput = () => {
+      vertixAmount = parseInt(vertixAmountSlider.value);
+      two.clear();
+      drawPrism();
+    };
+
+    const colorizeLines = (line) => {
+      if (Array.isArray(line)) {
+        line.forEach(colorizeLines);
+      } else {
+        line.stroke = "#FFF";
+        line.linewidth = 2;
+        line.fill = "#FFF";
+      }
+    };
+
+    const drawPrism = () => {
+      const yAxisTop = two.makeLine(
+        pivot.width,
+        pivot.height,
+        pivot.width,
+        pivot.height - prismHeight
+      );
+      const yAxisBot = two.makeLine(
+        pivot.width,
+        pivot.height,
+        pivot.width,
+        pivot.height + prismHeight
+      );
+      const xAxisRight = displayXAxis
+        ? two.makeLine(
+            pivot.width,
+            pivot.height,
+            pivot.width + prismWidth,
+            pivot.height
+          )
+        : {};
+      const xAxisLeft = displayXAxis
+        ? two.makeLine(
+            pivot.width,
+            pivot.height,
+            pivot.width - prismWidth,
+            pivot.height
+          )
+        : {};
+      colorizeLines([xAxisRight, xAxisLeft, yAxisTop, yAxisBot]);
+
+      for (let i = vertixAmount; i > 0; i--) {
+        const vertix1 = two.makeLine(
+          pivot.width - (prismWidth / vertixAmount) * i,
+          pivot.height,
+          pivot.width,
+          pivot.height - prismHeight
+        );
+        const vertix2 = two.makeLine(
+          pivot.width + (prismWidth / vertixAmount) * i,
+          pivot.height,
+          pivot.width,
+          pivot.height - prismHeight
+        );
+        const vertix3 = two.makeLine(
+          pivot.width - (prismWidth / vertixAmount) * i,
+          pivot.height,
+          pivot.width,
+          pivot.height + prismHeight
+        );
+        const vertix4 = two.makeLine(
+          pivot.width + (prismWidth / vertixAmount) * i,
+          pivot.height,
+          pivot.width,
+          pivot.height + prismHeight
+        );
+        colorizeLines([vertix1, vertix2, vertix3, vertix4]);
+      }
+      const boundaryLine1 = two.makeLine(
+        pivot.width - prismWidth,
+        pivot.height,
+        pivot.width,
+        pivot.height - prismHeight
+      );
+      const boundaryLine2 = two.makeLine(
+        pivot.width + prismWidth,
+        pivot.height,
+        pivot.width,
+        pivot.height - prismHeight
+      );
+      const boundaryLine3 = two.makeLine(
+        pivot.width - prismWidth,
+        pivot.height,
+        pivot.width,
+        pivot.height + prismHeight
+      );
+      const boundaryLine4 = two.makeLine(
+        pivot.width + prismWidth,
+        pivot.height,
+        pivot.width,
+        pivot.height + prismHeight
+      );
+      colorizeLines([boundaryLine1, boundaryLine2, boundaryLine3, boundaryLine4]);
+      const circle = displayPivot
+        ? two.makeCircle(pivot.width, pivot.height, 5)
+        : {};
+      circle.fill = "#FF8000";
+      circle.stroke = "orangered";
+      circle.linewidth = 5;
+
+      two.update();
+    };
+    drawPrism();
+  </script>
+</html>
