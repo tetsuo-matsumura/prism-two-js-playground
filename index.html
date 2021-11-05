@@ -90,7 +90,6 @@
       width: window.innerWidth / 2,
       height: window.innerHeight / 2,
     };
-
     const two = new Two(params).appendTo(elem);
 
     const prismHeightSlider = document.getElementById("prismHeight");
@@ -110,6 +109,7 @@
     let levitationToggle = true;
     let levitationSpeed = 20;
     let levitate;
+    let allPaths;
 
     levitationSpeedSlider.oninput = () => {
       levitationSpeed = parseInt(levitationSpeedSlider.value);
@@ -147,8 +147,8 @@
 
     const animate = () => {
       clearInterval(levitate);
+      if (levitationSpeed == 0) return;
       levitate = setInterval(() => {
-        if (levitationSpeed == 0) levitationAmount = 0;
         pivot.height = pivot.height + levitationAmount;
         levitationToggle ? levitationAmount++ : levitationAmount--;
         if (levitationAmount > 5) {
@@ -194,6 +194,7 @@
             pivot.height
           )
         : {};
+
       const xAxisLeft = displayXAxis
         ? two.makeLine(
             pivot.width,
@@ -270,7 +271,49 @@
 
       two.update();
       animate();
+
+      allPaths = document.getElementsByTagName("path");
+      for (var i = 0; i < allPaths.length; i++) {
+         let thisElement = allPaths[i];
+          allPaths[i].onmouseenter = (mouse) => {
+          beep(100 + mouse.clientY, mouse.clientX, mouse.clientY*1.6)
+          let hueRotation =  mouse.clientX / params.width
+          let lightness = mouse.clientY / params.height
+          console.log( lightness)
+          thisElement.style.stroke = `hsla(${hueRotation * 360}, 100%, ${lightness*100}%,1)`;
+          setTimeout(()=> {
+            thisElement.style.stroke = "rgba(255,255,255,1)";
+          },100 + mouse.clientY)
+        }
+      }
     };
     drawPrism();
+
+    var beep = (function () {
+    var ctxClass = window.audioContext ||window.AudioContext || window.AudioContext || window.webkitAudioContext
+    var ctx = new ctxClass();
+    return function (duration, frequency, detune) {
+
+        duration = +duration;
+
+        var gainNode = ctx.createGain();
+        var osc = ctx.createOscillator();
+        gainNode.gain.value = 0.1
+
+        osc.type = "square";
+        osc.frequency.setValueAtTime(frequency, ctx.currentTime)
+        osc.detune.setValueAtTime(detune, ctx.currentTime);;
+        osc.connect(gainNode)
+        gainNode.connect(ctx.destination);
+        if (osc.noteOn) osc.noteOn(0);
+        if (osc.start) osc.start();
+
+        setTimeout(function () {
+            if (osc.noteOff) osc.noteOff(0); 
+            if (osc.stop) osc.stop();
+        }, duration);
+
+    };
+})();
   </script>
 </html>

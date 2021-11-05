@@ -34,3 +34,7 @@ body {
 label {
   margin-bottom: 10px;
 }
+
+path {
+  border: 3px solid white;
+}
