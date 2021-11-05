@@ -359,7 +359,7 @@
       animate();
 
       allPaths = document.getElementsByTagName("path");
-      for (var i = 0; i < allPaths.length; i++) {
+      for (let i = 0; i < allPaths.length; i++) {
         let thisElement = allPaths[i];
         allPaths[i].onmouseenter = (mouse) => {
           beep(
@@ -381,18 +381,18 @@
     };
     drawPrism();
 
-    var beep = (function () {
-      var ctxClass =
+    let beep = (function () {
+      let ctxClass =
         window.audioContext ||
         window.AudioContext ||
         window.AudioContext ||
         window.webkitAudioContext;
-      var ctx = new ctxClass();
+      let ctx = new ctxClass();
       return function (duration, frequency, detune) {
         duration = +duration;
 
-        var gainNode = ctx.createGain();
-        var osc = ctx.createOscillator();
+        let gainNode = ctx.createGain();
+        let osc = ctx.createOscillator();
         gainNode.gain.value = soundVolume / 100;
 
         osc.type = oscType.toLowerCase();
