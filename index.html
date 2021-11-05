@@ -67,7 +67,7 @@
           min="0"
           step="10"
           max="120"
-          value="20"
+          value="0"
           class="slider"
           id="levitationSpeed"
         /><label for="scales">Levitation Speed</label>
@@ -81,6 +81,31 @@
         <label for="scales">Display X Axis?</label>
       </div>
     </div>
+    <div id="sound-controller">
+      <div>
+        <input
+          type="range"
+          min="1"
+          max="4"
+          step="0.1"
+          value="1"
+          class="slider"
+          id="pitch"
+        /><label for="scales">Pitch Crazyness</label>
+      </div>
+      <div>
+        <input
+          type="range"
+          min="100"
+          max="2000"
+          step="100"
+          value="100"
+          class="slider"
+          id="soundDuration"
+        /><label for="scales">Sound Duration</label>
+      </div>
+    </div>
+    <div id="unmute">Click on the screen to unmute</div>
   </body>
   <script src="./two.min.js"></script>
   <script>
@@ -98,6 +123,8 @@
     const displayPivotRadio = document.getElementById("displayPivot");
     const displayXAxisRadio = document.getElementById("displayXAxis");
     const levitationSpeedSlider = document.getElementById("levitationSpeed");
+    const pitchSlider = document.getElementById("pitch");
+    const soundDurationSlider = document.getElementById("soundDuration");
 
     let prismWidth = 100;
     let prismHeight = 200;
@@ -107,9 +134,30 @@
     let displayXAxis = false;
     let levitationAmount = 0;
     let levitationToggle = true;
-    let levitationSpeed = 20;
+    let levitationSpeed = 0;
     let levitate;
     let allPaths;
+    let unmute = false;
+    let pitch = 1;
+    let soundDuration = 100;
+
+    document.addEventListener("click", ()=> {
+      unmute=true;
+      document.getElementById("unmute").style.display = "none";
+    })
+
+    soundDurationSlider.oninput = () => {
+      soundDuration = parseInt(soundDurationSlider.value);
+      two.clear();
+      drawPrism();
+    };
+    
+
+    pitchSlider.oninput = () => {
+      pitch = parseInt(pitchSlider.value);
+      two.clear();
+      drawPrism();
+    }
 
     levitationSpeedSlider.oninput = () => {
       levitationSpeed = parseInt(levitationSpeedSlider.value);
@@ -168,7 +216,7 @@
         line.forEach(colorizeLines);
       } else {
         line.stroke = "#FFF";
-        line.linewidth = 2;
+        line.linewidth = 3;
         line.fill = "#FFF";
       }
     };
@@ -276,10 +324,10 @@
       for (var i = 0; i < allPaths.length; i++) {
          let thisElement = allPaths[i];
           allPaths[i].onmouseenter = (mouse) => {
-          beep(100 + mouse.clientY, mouse.clientX, mouse.clientY*1.6)
+          beep(soundDuration + mouse.clientY, mouse.clientX, (mouse.clientY*(1.6*+Math.random()*pitch)));
+          
           let hueRotation =  mouse.clientX / params.width
           let lightness = mouse.clientY / params.height
-          console.log( lightness)
           thisElement.style.stroke = `hsla(${hueRotation * 360}, 100%, ${lightness*100}%,1)`;
           setTimeout(()=> {
             thisElement.style.stroke = "rgba(255,255,255,1)";

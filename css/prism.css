@@ -6,7 +6,7 @@ body {
   background-color: black;
   height: 100vh;
 }
-#controller {
+#controller, #sound-controller {
   position: absolute;
   top: 20;
   left: 20;
@@ -19,7 +19,7 @@ body {
   justify-content: space-around;
 }
 
-#controller > div {
+#controller > div, #sound-controller > div {
   width: 80%;
   color: white;
   align-self: center;
@@ -27,8 +27,15 @@ body {
   flex-direction: column-reverse;
 }
 
-#controller > div > input[type="range"] {
+#controller > div > input[type="range"] , #sound-controller  > div > input[type="range"] {
   width: 50%;
+}
+
+#sound-controller {
+  height: 20%;
+  left: unset;
+  right: 20;
+
 }
 
 label {
@@ -37,4 +44,20 @@ label {
 
 path {
   border: 3px solid white;
+}
+
+#unmute {
+  position: absolute;
+  bottom: 20;
+  left: 20;
+  width: 60%;
+  height: 20%;
+  text-align: center;
+  font-size: 2rem;
+  border: 1px solid white;
+  background-color: rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  color: white;
 }
